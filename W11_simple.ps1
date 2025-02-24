@@ -17,7 +17,7 @@ Import-Module OSD -Force
 #=======================================================================
 $Params = @{
     OSVersion = "Windows 11"
-    OSBuild = "23H2"
+    OSBuild = "24H2"
     OSEdition = "Pro"
     OSLanguage = "de-de"
     OSLicense = "Retail"
@@ -33,7 +33,7 @@ Write-Host -ForegroundColor Green "Create C:\ProgramData\OSDeploy\OSDeploy.OOBED
 $OOBEDeployJson = @'
 {
     "AddNetFX3":  {
-                      "IsPresent":  true
+                      "IsPresent":  false
                   },
     "Autopilot":  {
                       "IsPresent":  false
@@ -83,62 +83,26 @@ $OOBEDeployJson | Out-File -FilePath "C:\ProgramData\OSDeploy\OSDeploy.OOBEDeplo
 #================================================
 #  [PostOS] AutopilotOOBE Configuration Staging
 #================================================
-Write-Host -ForegroundColor Green "Define Computername:"
-$Serial = Get-WmiObject Win32_bios | Select-Object -ExpandProperty SerialNumber
-$TargetComputername = $Serial.Substring(4,3)
 
-$AssignedComputerName = "AkosCloud-$TargetComputername"
-Write-Host -ForegroundColor Red $AssignedComputerName
-Write-Host ""
-
-Write-Host -ForegroundColor Green "Create C:\ProgramData\OSDeploy\OSDeploy.AutopilotOOBE.json"
-$AutopilotOOBEJson = @"
-{
-    "AssignedComputerName" : "$AssignedComputerName",
-    "AddToGroup":  "AADGroupX",
-    "Assign":  {
-                   "IsPresent":  true
-               },
-    "GroupTag":  "GroupTagXXX",
-    "Hidden":  [
-                   "AddToGroup",
-                   "AssignedUser",
-                   "PostAction",
-                   "GroupTag",
-                   "Assign"
-               ],
-    "PostAction":  "Quit",
-    "Run":  "NetworkingWireless",
-    "Docs":  "https://google.com/",
-    "Title":  "Autopilot Manual Register"
-}
-"@
-
-If (!(Test-Path "C:\ProgramData\OSDeploy")) {
-    New-Item "C:\ProgramData\OSDeploy" -ItemType Directory -Force | Out-Null
-}
-$AutopilotOOBEJson | Out-File -FilePath "C:\ProgramData\OSDeploy\OSDeploy.AutopilotOOBE.json" -Encoding ascii -Force
 
 #================================================
 #  [PostOS] OOBE CMD Command Line
 #================================================
 Write-Host -ForegroundColor Green "Downloading and creating script for OOBE phase"
-Invoke-RestMethod https://raw.githubusercontent.com/AkosBakos/OSDCloud/main/Set-KeyboardLanguage.ps1 | Out-File -FilePath 'C:\Windows\Setup\scripts\keyboard.ps1' -Encoding ascii -Force
-Invoke-RestMethod https://raw.githubusercontent.com/AkosBakos/OSDCloud/main/Install-EmbeddedProductKey.ps1 | Out-File -FilePath 'C:\Windows\Setup\scripts\productkey.ps1' -Encoding ascii -Force
-#Invoke-RestMethod https://check-autopilotprereq.osdcloud.ch | Out-File -FilePath 'C:\Windows\Setup\scripts\autopilotprereq.ps1' -Encoding ascii -Force
-#Invoke-RestMethod https://start-autopilotoobe.osdcloud.ch | Out-File -FilePath 'C:\Windows\Setup\scripts\autopilotoobe.ps1' -Encoding ascii -Force
+Invoke-RestMethod https://raw.githubusercontent.com/cloudsolutiongmbh/pal/refs/heads/main/setkeyboard.ps1 | Out-File -FilePath 'C:\Windows\Setup\scripts\keyboard.ps1' -Encoding ascii -Force
+Invoke-RestMethod https://raw.githubusercontent.com/cloudsolutiongmbh/pal/refs/heads/main/windows_license.ps1 | Out-File -FilePath 'C:\Windows\Setup\scripts\productkey.ps1' -Encoding ascii -Force
+Invoke-RestMethod https://raw.githubusercontent.com/cloudsolutiongmbh/pal/refs/heads/main/cleanlogs.ps1 | Out-File -FilePath 'C:\Windows\Setup\scripts\cleanlogs.ps1' -Encoding ascii -Force
 
 
 $OOBECMD = @'
 @echo off
 # Execute OOBE Tasks
 start /wait powershell.exe -NoL -ExecutionPolicy Bypass -F C:\Windows\Setup\Scripts\keyboard.ps1
-start /wait powershell.exe -NoL -ExecutionPolicy Bypass -F C:\Windows\Setup\Scripts\productkey.ps1
-#start /wait powershell.exe -NoL -ExecutionPolicy Bypass -F C:\Windows\Setup\Scripts\autopilotprereq.ps1
-#start /wait powershell.exe -NoL -ExecutionPolicy Bypass -F C:\Windows\Setup\Scripts\autopilotoobe.ps1
+start /wait powershell.exe -NoL -ExecutionPolicy Bypass -F C:\Windows\Setup\Scripts\productkey.ps11
+#start /wait powershell.exe -NoL -ExecutionPolicy Bypass -F C:\Windows\Setup\Scripts\cleanlogs.ps1
 
 # Below a PS session for debug and testing in system context, # when not needed 
-# start /wait powershell.exe -NoL -ExecutionPolicy Bypass
+#start /wait powershell.exe -NoL -ExecutionPolicy Bypass
 
 exit 
 '@
