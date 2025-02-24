@@ -89,7 +89,7 @@ $OOBEDeployJson | Out-File -FilePath "C:\ProgramData\OSDeploy\OSDeploy.OOBEDeplo
 #  [PostOS] OOBE CMD Command Line
 #================================================
 Write-Host -ForegroundColor Green "Downloading and creating script for OOBE phase"
-Invoke-RestMethod https://raw.githubusercontent.com/cloudsolutiongmbh/pal/refs/heads/main/setkeyboard.ps1 | Out-File -FilePath 'C:\Windows\Setup\scripts\keyboard.ps1' -Encoding ascii -Force
+Invoke-RestMethod https://raw.githubusercontent.com/cloudsolutiongmbh/wpag/refs/heads/main/keyboard-CH.ps1 | Out-File -FilePath 'C:\Windows\Setup\scripts\keyboard.ps1' -Encoding ascii -Force
 Invoke-RestMethod https://raw.githubusercontent.com/cloudsolutiongmbh/pal/refs/heads/main/windows_license.ps1 | Out-File -FilePath 'C:\Windows\Setup\scripts\productkey.ps1' -Encoding ascii -Force
 Invoke-RestMethod https://raw.githubusercontent.com/cloudsolutiongmbh/pal/refs/heads/main/cleanlogs.ps1 | Out-File -FilePath 'C:\Windows\Setup\scripts\cleanlogs.ps1' -Encoding ascii -Force
 
