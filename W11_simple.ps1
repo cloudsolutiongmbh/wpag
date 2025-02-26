@@ -10,7 +10,22 @@ Write-Host -ForegroundColor Green "Updating OSD PowerShell Module"
 Install-Module OSD -Force
 
 Write-Host  -ForegroundColor Green "Importing OSD PowerShell Module"
-Import-Module OSD -Force   
+Import-Module OSD -Force
+
+#Set OSDCloud Vars
+$Global:MyOSDCloud = [ordered]@{
+    Restart = [bool]$False
+    RecoveryPartition = [bool]$true
+    OEMActivation = [bool]$True
+    WindowsUpdate = [bool]$true
+    WindowsUpdateDrivers = [bool]$true
+    WindowsDefenderUpdate = [bool]$true
+    SetTimeZone = [bool]$true
+    ClearDiskConfirm = [bool]$False
+    ShutdownSetupComplete = [bool]$false
+    SyncMSUpCatDriverUSB = [bool]$true
+    CheckSHA1 = [bool]$true
+}
 
 #=======================================================================
 #   [OS] Params and Start-OSDCloud
@@ -98,7 +113,8 @@ $OOBECMD = @'
 @echo off
 # Execute OOBE Tasks
 start /wait powershell.exe -NoL -ExecutionPolicy Bypass -F C:\Windows\Setup\Scripts\keyboard.ps1
-start /wait powershell.exe -NoL -ExecutionPolicy Bypass -F C:\Windows\Setup\Scripts\productkey.ps11
+start /wait powershell.exe -NoL -ExecutionPolicy Bypass -F C:\Windows\Setup\Scripts\productkey.ps1
+start /wait powershell.exe -NoL -ExecutionPolicy Bypass -F D:\autopilot.ps1
 start /wait powershell.exe -NoL -ExecutionPolicy Bypass -F C:\Windows\Setup\Scripts\cleanlogs.ps1
 
 # Below a PS session for debug and testing in system context, # when not needed 
