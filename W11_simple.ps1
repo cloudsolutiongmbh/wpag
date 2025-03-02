@@ -147,8 +147,6 @@ Invoke-RestMethod https://raw.githubusercontent.com/cloudsolutiongmbh/pal/refs/h
 $OOBECMD = @'
 @echo off
 # Execute OOBE Tasks
-PowerShell -NoL -Com Set-ExecutionPolicy RemoteSigned -Force
-Set Path = %PATH%;C:\Program Files\WindowsPowerShell\Scripts
 start /wait powershell.exe -NoL -ExecutionPolicy Bypass -F C:\Windows\Setup\Scripts\keyboard.ps1
 start /wait powershell.exe -NoL -ExecutionPolicy Bypass -F C:\Windows\Setup\Scripts\productkey.ps1
 start /wait powershell.exe -NoL -ExecutionPolicy Bypass -F C:\Windows\Setup\Scripts\prereq.ps1
