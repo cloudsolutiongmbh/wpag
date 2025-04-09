@@ -32,7 +32,7 @@ $Global:MyOSDCloud = [ordered]@{
 #=======================================================================
 $Params = @{
     OSVersion = "Windows 11"
-    OSBuild = "24H2"
+    OSBuild = "24H1"
     OSEdition = "Pro"
     OSLanguage = "de-de"
     OSLicense = "Retail"
