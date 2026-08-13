@@ -32,7 +32,7 @@ $Global:MyOSDCloud = [ordered]@{
 #=======================================================================
 $Params = @{
     OSVersion = "Windows 11"
-    OSBuild = "23H2"
+    OSBuild = "25H2"
     OSEdition = "Pro"
     OSLanguage = "de-de"
     OSLicense = "Retail"
@@ -100,9 +100,9 @@ $OOBEDeployJson | Out-File -FilePath "C:\ProgramData\OSDeploy\OSDeploy.OOBEDeplo
 #  [PostOS] OOBE CMD Command Line
 #================================================
 Invoke-RestMethod https://raw.githubusercontent.com/cloudsolutiongmbh/wpag/refs/heads/main/keyboard-CH.ps1 | Out-File -FilePath 'C:\Windows\Setup\scripts\keyboard.ps1' -Encoding ascii -Force
-Invoke-RestMethod https://raw.githubusercontent.com/cloudsolutiongmbh/pal/refs/heads/main/windows_license.ps1 | Out-File -FilePath 'C:\Windows\Setup\scripts\productkey.ps1' -Encoding ascii -Force
-Invoke-RestMethod https://raw.githubusercontent.com/cloudsolutiongmbh/pal/refs/heads/main/prereq.ps1 | Out-File -FilePath 'C:\Windows\Setup\scripts\prereq.ps1' -Encoding ascii -Force
-Invoke-RestMethod https://raw.githubusercontent.com/cloudsolutiongmbh/pal/refs/heads/main/cleanlogs.ps1 | Out-File -FilePath 'C:\Windows\Setup\scripts\cleanlogs.ps1' -Encoding ascii -Force
+Invoke-RestMethod https://raw.githubusercontent.com/cloudsolutiongmbh/wpag/refs/heads/main/windows_license.ps1 | Out-File -FilePath 'C:\Windows\Setup\scripts\productkey.ps1' -Encoding ascii -Force
+Invoke-RestMethod https://raw.githubusercontent.com/cloudsolutiongmbh/wpag/refs/heads/main/windows_update.ps1 | Out-File -FilePath 'C:\Windows\Setup\scripts\update.ps1' -Encoding ascii -Force
+Invoke-RestMethod https://raw.githubusercontent.com/cloudsolutiongmbh/wpag/refs/heads/main/cleanlogs.ps1 | Out-File -FilePath 'C:\Windows\Setup\scripts\cleanlogs.ps1' -Encoding ascii -Force
 
 
 $OOBECMD = @'
@@ -110,7 +110,6 @@ $OOBECMD = @'
 # Execute OOBE Tasks
 start /wait powershell.exe -NoL -ExecutionPolicy Bypass -F C:\Windows\Setup\Scripts\keyboard.ps1
 start /wait powershell.exe -NoL -ExecutionPolicy Bypass -F C:\Windows\Setup\Scripts\productkey.ps1
-start /wait powershell.exe -NoL -ExecutionPolicy Bypass -F C:\Windows\Setup\Scripts\prereq.ps1
 start /wait powershell.exe -NoL -ExecutionPolicy Bypass -F D:\autopilot.ps1
 start /wait powershell.exe -NoL -ExecutionPolicy Bypass -F E:\autopilot.ps1
 start /wait powershell.exe -NoL -ExecutionPolicy Bypass -F F:\autopilot.ps1
