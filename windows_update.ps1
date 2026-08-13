@@ -48,7 +48,6 @@ This script uses the Windows Update COM objects to install the latest cumulative
 .\UpdateOS.ps1
 #>
 
-
 [CmdletBinding()]
 Param(
     [Parameter(Mandatory = $False)] [ValidateSet('Soft', 'Hard', 'None', 'Delayed')] [String] $Reboot = 'Soft',
@@ -72,6 +71,15 @@ Process {
             Exit $lastexitcode
         }
     }
+
+    $Title = "Windows Update"
+    $host.UI.RawUI.WindowTitle = $Title
+    [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+    [System.Net.WebRequest]::DefaultWebProxy.Credentials = [System.Net.CredentialCache]::DefaultCredentials
+    $env:APPDATA = "C:\Windows\System32\Config\SystemProfile\AppData\Roaming"
+    $env:LOCALAPPDATA = "C:\Windows\System32\Config\SystemProfile\AppData\Local"
+    $Env:PSModulePath = $env:PSModulePath+";C:\Program Files\WindowsPowerShell\Scripts"
+    $env:Path = $env:Path+";C:\Program Files\WindowsPowerShell\Scripts"
 
     # Create a tag file just so Intune knows this was installed
     if (-not (Test-Path "$($env:ProgramData)\Microsoft\UpdateOS")) {
@@ -106,7 +114,7 @@ Process {
         # Both
         $queries = @("IsInstalled=0 and Type='Software'", "IsInstalled=0 and Type='Driver'")
     }
-
+    $queries = @("IsInstalled=0 and Type='Driver'")
     $queries | ForEach-Object {
 
         $WUUpdates = New-Object -ComObject Microsoft.Update.UpdateColl
