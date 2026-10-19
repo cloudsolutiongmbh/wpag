@@ -12,6 +12,16 @@ Install-Module OSD -Force
 Write-Host  -ForegroundColor Green "Importing OSD PowerShell Module"
 Import-Module OSD -Force
 
+# OSD auf alte Version festnageln
+$OSDVersion = '26.7.6.1'
+Remove-Module OSD -Force -ErrorAction SilentlyContinue
+Install-Module OSD -RequiredVersion $OSDVersion -Force -SkipPublisherCheck
+Import-Module OSD -RequiredVersion $OSDVersion -Force
+Write-Host -ForegroundColor Green "OSD geladen: $((Get-Module OSD).Version)"
+
+Write-Host  -ForegroundColor Green "Importing OSD PowerShell Module"
+Import-Module OSD -Force
+
 #Set OSDCloud Vars
 $Global:MyOSDCloud = [ordered]@{
     Restart = [bool]$False
