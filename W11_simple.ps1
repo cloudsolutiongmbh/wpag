@@ -5,23 +5,8 @@ if ((Get-MyComputerModel) -match 'Virtual') {
     Write-Host  -ForegroundColor Green "Setting Display Resolution to 1600x"
     Set-DisRes 1600
 }
-
-# Test: funktioniert DISM in diesem WinPE ueberhaupt?
-try {
-    Import-Module Dism -ErrorAction Stop
-    Write-Host -ForegroundColor Green "DISM-Modul OK"
-}
-catch {
-    Write-Host -ForegroundColor Red "DISM-Modul defekt: $($_.Exception.Message)"
-    Read-Host "Enter zum Fortfahren"
-}
-
-# OSD auf alte Version festnageln
-$OSDVersion = '26.7.6.1'
-Remove-Module OSD -Force -ErrorAction SilentlyContinue
-Install-Module OSD -RequiredVersion $OSDVersion -Force -SkipPublisherCheck
-Import-Module OSD -RequiredVersion $OSDVersion -Force
-Write-Host -ForegroundColor Green "OSD geladen: $((Get-Module OSD).Version)"
+Write-Host -ForegroundColor Green "Updating OSD PowerShell Module"
+#Install-Module OSD -Force
 
 Write-Host  -ForegroundColor Green "Importing OSD PowerShell Module"
 Import-Module OSD -Force
