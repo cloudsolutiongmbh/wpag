@@ -20,7 +20,7 @@ Import-Module OSD -RequiredVersion $OSDVersion -Force
 Write-Host -ForegroundColor Green "OSD geladen: $((Get-Module OSD).Version)"
 
 Write-Host  -ForegroundColor Green "Importing OSD PowerShell Module"
-#Import-Module OSD -Force
+Import-Module OSD -Force
 
 #Set OSDCloud Vars
 $Global:MyOSDCloud = [ordered]@{
