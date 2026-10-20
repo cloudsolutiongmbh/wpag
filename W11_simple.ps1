@@ -4,7 +4,8 @@
 if ((Get-MyComputerModel) -match 'Virtual') {
     Write-Host  -ForegroundColor Green "Setting Display Resolution to 1600x"
     Set-DisRes 1600
-}$ScriptUrl = 'https://raw.githubusercontent.com/cloudsolutiongmbh/wpag/refs/heads/main/W11_simple.ps1'
+}
+$ScriptUrl = 'https://raw.githubusercontent.com/cloudsolutiongmbh/wpag/refs/heads/main/W11_simple.ps1'
 $PSConfig  = "$env:SystemRoot\System32\WindowsPowerShell\v1.0\powershell.exe.config"
  
 function Test-DismModule {
