@@ -4,12 +4,61 @@
 if ((Get-MyComputerModel) -match 'Virtual') {
     Write-Host  -ForegroundColor Green "Setting Display Resolution to 1600x"
     Set-DisRes 1600
+}$ScriptUrl = 'https://raw.githubusercontent.com/cloudsolutiongmbh/wpag/refs/heads/main/W11_simple.ps1'
+$PSConfig  = "$env:SystemRoot\System32\WindowsPowerShell\v1.0\powershell.exe.config"
+ 
+function Test-DismModule {
+    try {
+        Import-Module Dism -ErrorAction Stop
+        return $true
+    }
+    catch {
+        Write-Host -ForegroundColor Yellow "DISM-Fehler: $($_.Exception.Message)"
+        return $false
+    }
 }
-Write-Host -ForegroundColor Green "Updating OSD PowerShell Module"
-#Install-Module OSD -Force
-
-Write-Host  -ForegroundColor Green "Importing OSD PowerShell Module"
-Import-Module OSD -Force
+ 
+if (Test-DismModule) {
+    Write-Host -ForegroundColor Green "DISM-Modul OK"
+}
+elseif (-not $env:DISM_FIX_APPLIED) {
+    Write-Host -ForegroundColor Yellow "Setze loadFromRemoteSources in powershell.exe.config ..."
+ 
+    # Bestehende Config erweitern statt ueberschreiben
+    if (Test-Path $PSConfig) {
+        [xml]$xml = Get-Content $PSConfig -Raw
+    }
+    else {
+        [xml]$xml = '<?xml version="1.0" encoding="utf-8"?><configuration></configuration>'
+    }
+    $root    = $xml.DocumentElement
+    $runtime = $root.SelectSingleNode('runtime')
+    if (-not $runtime) { $runtime = $root.AppendChild($xml.CreateElement('runtime')) }
+    $lfrs = $runtime.SelectSingleNode('loadFromRemoteSources')
+    if (-not $lfrs) { $lfrs = $runtime.AppendChild($xml.CreateElement('loadFromRemoteSources')) }
+    $lfrs.SetAttribute('enabled', 'true')
+    $xml.Save($PSConfig)
+ 
+    # Config greift nur in neuen Prozessen -> Skript neu starten.
+    # Die Umgebungsvariable verhindert eine Endlosschleife.
+    Write-Host -ForegroundColor Yellow "Starte Skript in neuer PowerShell neu ..."
+    $env:DISM_FIX_APPLIED = '1'
+    Start-Process powershell.exe -Wait -NoNewWindow -ArgumentList "-NoProfile -ExecutionPolicy Bypass -Command `"Invoke-Expression (Invoke-RestMethod '$ScriptUrl')`""
+    exit
+}
+else {
+    Write-Host -ForegroundColor Red "DISM-Modul auch nach dem Fix defekt."
+    Read-Host "Enter zum Fortfahren"
+}
+ 
+$OSDVersion = '26.7.6.1'
+Remove-Module OSD -Force -ErrorAction SilentlyContinue
+if (-not (Get-Module OSD -ListAvailable | Where-Object { $_.Version -eq [version]$OSDVersion })) {
+    Install-Module OSD -RequiredVersion $OSDVersion -Force -SkipPublisherCheck
+}
+# Wichtig: immer mit -RequiredVersion importieren, sonst wird die neueste Version geladen
+Import-Module OSD -RequiredVersion $OSDVersion -Force
+Write-Host -ForegroundColor Green "OSD geladen: $((Get-Module OSD).Version)"
 
 #Set OSDCloud Vars
 $Global:MyOSDCloud = [ordered]@{
